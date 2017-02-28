@@ -27,18 +27,47 @@ import com.mysql.jdbc.PreparedStatement;
 import com.mysql.jdbc.ResultSet;
 
 import beans.ResponseBean;
+import domain.Account;
+import domain.Company;
+import domain.Order;
+import domain.ProductPurchaser;
 import util.DBConnectionManager;
 public class CreateSubscriptionDaoImp implements CreateSubscriptionDao {
 	
-	
+	@Override
+	public Boolean checkExistingCompany(ResponseBean responseBean) {
+		
+		String checkCompany = "SELECT * FROM company_info WHERE uuid = ? ";
+		Connection con =(Connection) DBConnectionManager.getConnection();
+	 	System.out.println(con);
+		System.out.println(" Connection build ");
+		try {
+			PreparedStatement preparedStmt1 = (PreparedStatement)con.prepareStatement(checkCompany);
+			System.out.println("first executed");
+			  preparedStmt1.setString(1, responseBean.getPayload().getCompany().getUuid());
+			   ResultSet rs1 = (ResultSet) preparedStmt1.executeQuery();
+			   System.out.println( "hello"+rs1);
+			   while (rs1.next()) {
+	                String companyUuid = rs1.getString("uuid");
+			   
+			   if(companyUuid != null)
+				   return false;
+		}
+		} 
+		
+		   catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		return true;
+	}
 
 	@Override
-	public void marketplaceCreateSubscriptionDao(ResponseBean responseBean) {
+	public void productPurchaserDetails(ProductPurchaser productPurchaser) {
 		// TODO Auto-generated method stub
 		
 	try{
-		 ResponseBean rBean = responseBean;
-		String query = " insert into marketplace_info(uuid,email,base_url,partner,address) values (?,?,?,?,?)";
+		    String query = " insert into creator_info(uuid,email,base_url,partner,address) values (?,?,?,?,?)";
 		 	Connection con =(Connection) DBConnectionManager.getConnection();
 	     	System.out.println(con);
 			System.out.println(" Connection build ");
@@ -46,18 +75,15 @@ public class CreateSubscriptionDaoImp implements CreateSubscriptionDao {
         
              System.out.println("  build ");
         
-    
-     //   preparedStmt.setInt(1, user.getId());
+        preparedStmt.setString(1,productPurchaser.getUuid());
         
-        preparedStmt.setString(1,rBean.getCreator().getUuid());
-        
-        preparedStmt.setString(2,rBean.getCreator().getEmail());
+        preparedStmt.setString(2,productPurchaser.getEmail());
         System.out.println("  build ");
-        preparedStmt.setString(3,rBean.getMarketplace().getBaseUrl());
+        preparedStmt.setString(3,productPurchaser.getBaseUrl());
         
-        preparedStmt.setString(4,rBean.getMarketplace().getPartner());
+        preparedStmt.setString(4,productPurchaser.getPartner());
         
-        preparedStmt.setString(5,rBean.getCreator().getAddress());
+        preparedStmt.setString(5,productPurchaser.getAddress());
         
         System.out.println("hello end");
         
@@ -71,27 +97,26 @@ public class CreateSubscriptionDaoImp implements CreateSubscriptionDao {
 	}
 
 	@Override
-	public void companyCreateSubscriptionDao(ResponseBean responseBean) {
+	public void companyDetails(Company company) {
 		// TODO Auto-generated method stub
 		try{
-			 ResponseBean rBean = responseBean;
+
 			 Connection con =(Connection) DBConnectionManager.getConnection();
 	       String query = " insert into company_info(uuid,email,name,phone_no,website,marketplace_uuid) values (?,?,?,?,?,?)";
 	       PreparedStatement preparedStmt = (PreparedStatement)con.prepareStatement(query);
-	            preparedStmt.setString(1,rBean.getPayload().getCompany().getUuid());
+	            preparedStmt.setString(1,company.getUuid());
 	        
-	            preparedStmt.setString(2,rBean.getPayload().getCompany().getEmail());
+	            preparedStmt.setString(2,company.getEmail());
 	        
-	            preparedStmt.setString(3,rBean.getPayload().getCompany().getName());
+	            preparedStmt.setString(3,company.getName());
 	        
-	            preparedStmt.setString(4,rBean.getPayload().getCompany().getPhoneNumber());
+	            preparedStmt.setString(4,company.getPhone());
 	        
-	            preparedStmt.setString(5,rBean.getPayload().getCompany().getWebsite());
+	            preparedStmt.setString(5,company.getWebsite());
 	            
-	            preparedStmt.setString(6,rBean.getCreator().getUuid());
+	            preparedStmt.setString(6,company.getMarketplaceUuid());
 	       
 	            preparedStmt.executeUpdate();
-	        //    con.close();
 
 	             }   catch (SQLException e) {
 	        System.err.println("Got an exception2");
@@ -100,68 +125,67 @@ public class CreateSubscriptionDaoImp implements CreateSubscriptionDao {
 			
 		
 	}
+				@Override
+				public void accountDetails(Account account) {
+					// TODO Auto-generated method stub
+					try{
+					Connection con =(Connection) DBConnectionManager.getConnection();
+					String query = " insert into account_info(account_identifier,status,company_uuid) values (?,?,?)";
+			           
+		            PreparedStatement preparedStmt = (PreparedStatement)con.prepareStatement(query);
+		            preparedStmt.setString(1,account.getAccountIdentifier());
+			        
+		            preparedStmt.setString(2,account.getStatus());
+		        
+		            preparedStmt.setString(3,account.getCompanyUuid());
+		            preparedStmt.executeUpdate();
+			    
+			                 }
+			             catch (SQLException e) {
+			        System.err.println("Got an exception3");
+			        System.err.println(e.getMessage());
+			    }
+				}
+		        
+				
 
-	@Override
-	public void accountCreateSubscriptionDao(ResponseBean responseBean) {
-		// TODO Auto-generated method stub
-try{
-	        ResponseBean rBean = responseBean;
-
-	     	Connection con =(Connection) DBConnectionManager.getConnection();
+				@Override
+				public void orderDetails(Order order) {
+					  try{
+							Connection con =(Connection) DBConnectionManager.getConnection();
+				            String query = " insert into order_info(edition_code,pricing_duration,addon_offering_code,notice,unit,quantity,remaining_quantity,company_uuid) values (?,?,?,?,?,?,?,?)";
+				           
+				            PreparedStatement preparedStmt = (PreparedStatement)con.prepareStatement(query);
+				       
+				            preparedStmt.setString(1,order.getEditionCode());
+	
+				            preparedStmt.setString(2,order.getPricingDuration());
+				       
+				            preparedStmt.setString(3,order.getAddonOfferingCode());
+				     
+				            preparedStmt.setString(4,order.getNotice());
+				            
+				            preparedStmt.setString(5,order.getUnit());
+				        
+				            preparedStmt.setInt(6,order.getQuantity());
+				            
+				            preparedStmt.setInt(7,order.getRemainingStock());
+				            
+				            preparedStmt.setString(8,order.getCompanyUuid());
+				       
+				            preparedStmt.executeUpdate();
+				         //   con.close();
 			
-			String checkCompany = "SELECT * FROM company_info WHERE uuid = ? ";
-
-            PreparedStatement preparedStmt1 = (PreparedStatement)con.prepareStatement(checkCompany);
-			System.out.println("first executed");
-			  preparedStmt1.setString(1, rBean.getPayload().getCompany().getUuid());
-			   ResultSet rs1 = (ResultSet) preparedStmt1.executeQuery();
-			  String checkApplication = "SELECT * FROM account_info WHERE application_uuid = ? ";
-			
-			    PreparedStatement preparedStmt2 = (PreparedStatement)con.prepareStatement(checkApplication);
-			    System.out.println("first executed");
-			    preparedStmt2.setString(1, rBean.getApplicationUuid());
-	         
-	            ResultSet rs2 = (ResultSet) preparedStmt2.executeQuery();
-	           if(rs1 == null && rs2 == null){
-	           	System.out.println("Account Already exist");
-	          }
-	           else{
-	            	
-	            String query = " insert into account_info(status,pricing_duration,addon_binding,notice,company_uuid,application_uuid) values (?,?,?,?,?,?)";
-	           
-	            PreparedStatement preparedStmt = (PreparedStatement)con.prepareStatement(query);
-	            System.out.println("third executed");
-	            if(rBean.getPayload().getAccount() == null){
-	            	preparedStmt.setString(1,null);
-	            }
-	            else{
-	           preparedStmt.setString(1,rBean.getPayload().getAccount().getStatus());
-	            }
-	            preparedStmt.setString(2,rBean.getPayload().getOrder().getPricingDuration());
-	            if(rBean.getPayload().getNotice() == null){
-	            	preparedStmt.setString(3,null);
-	            }
-	            else{
-	            preparedStmt.setString(3,rBean.getPayload().getNotice().getType());
-	            }
-	            if(rBean.getPayload().getAddonInstance() == null){
-	            	preparedStmt.setString(4,null);
-	            }
-	            else{
-	            preparedStmt.setString(4,rBean.getPayload().getAddonInstance().getId());
-	            }
-	            preparedStmt.setString(5,rBean.getPayload().getCompany().getUuid());
-	        
-	            preparedStmt.setString(6,rBean.getApplicationUuid());
-	       
-	            preparedStmt.executeUpdate();
-	         //   con.close();
-	                 }
-	             }   catch (SQLException e) {
-	        System.err.println("Got an exception3");
-	        System.err.println(e.getMessage());
-	    } 
+				             }   
+					    catch (SQLException e) {
+				        System.err.println("Got an exception4");
+				        System.err.println(e.getMessage());
+				
+					
+				} 
 		
 		
 	}
+
+	
 }

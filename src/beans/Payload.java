@@ -2,7 +2,7 @@ package beans;
 
 public class Payload {
 
-	private String user;
+	private User user;
 	private Company company;
 	private Account account;
 	private AddonInstance addonInstance;
@@ -10,10 +10,11 @@ public class Payload {
 	private Order order;
 	private Notice notice;
 	private Configuration configuration;
-	public String getUser() {
+	
+	public User getUser() {
 		return user;
 	}
-	public void setUser(String user) {
+	public void setUser(User user) {
 		this.user = user;
 	}
 	public Company getCompany() {

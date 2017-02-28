@@ -10,6 +10,7 @@ public class DBConnectionManager {
         Class.forName("com.mysql.jdbc.Driver");
         connection = DriverManager.getConnection(dbURL, user, pwd);
         System.out.println(connection);
+        System.out.println("connection has been set up");
     }
 
     public static Connection getConnection(){

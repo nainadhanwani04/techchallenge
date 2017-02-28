@@ -2,7 +2,7 @@ package controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-
+import util.ResponseCode;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -13,7 +13,9 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import services.CancelSubscriptionServices;
 import services.CancelSubscriptionServicesImp;
-import services.CreateNotificationServices;
+import util.AccountAlreadyExists;
+import util.AccountDoesNotExist;
+import util.ResponseCode;
 
 /**
  * Servlet implementation class cancelNotification
@@ -28,20 +30,22 @@ public class cancelNotification extends HttpServlet {
         String eventUrl = (String) request.getParameter("eventUrl");	
 		
 	    CancelSubscriptionServicesImp cancelSubscriptionServices = new CancelSubscriptionServicesImp();
-	    cancelSubscriptionServices.cancelSubscription(eventUrl);
-		
 		
 		response.setContentType("application/json");
-		
-		
 		PrintWriter writer = response.getWriter();
-        TestUser user1 = new TestUser("testIDentifier","true");
-        ObjectMapper mapper = new ObjectMapper();
-        String jason = mapper.writeValueAsString(user1);
+		try{
+		ResponseCode responseCode = cancelSubscriptionServices.cancelSubscription(eventUrl); 
+		ObjectMapper mapper = new ObjectMapper();
+        String jason = mapper.writeValueAsString(responseCode);
         writer.print(jason);
     
+	} 
+    
+    catch (AccountDoesNotExist e) {
+    	e.printStackTrace();
 	}
-
+    
+	}
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */

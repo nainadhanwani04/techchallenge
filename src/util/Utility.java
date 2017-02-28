@@ -22,7 +22,7 @@ import oauth.signpost.OAuthConsumer;
 	import oauth.signpost.exception.OAuthExpectationFailedException;
 	import oauth.signpost.exception.OAuthMessageSignerException;
 
-	public class TestUtility {
+	public class Utility {
 	
 		public static String getJasonResponse(String eventUrl)throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException {
 			String output="";

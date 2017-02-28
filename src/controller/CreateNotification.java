@@ -1,5 +1,5 @@
 package controller;
-
+import util.ResponseCode;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -14,7 +14,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 import oauth.signpost.exception.OAuthCommunicationException;
 import oauth.signpost.exception.OAuthExpectationFailedException;
 import oauth.signpost.exception.OAuthMessageSignerException;
-import services.CreateNotificationServices;
+import services.CreateSubscriptionServicesImp;
+import util.AccountAlreadyExists;
 
 /**
  * Servlet implementation class create
@@ -32,21 +33,27 @@ public class CreateNotification extends HttpServlet {
 		String eventUrl = (String) request.getParameter("eventUrl");
 	 	
 		
-		CreateNotificationServices createNotificationServices = new CreateNotificationServices();
-		
-	 	createNotificationServices.CreateNotification(eventUrl);
-		
-		
+		CreateSubscriptionServicesImp createServices = new CreateSubscriptionServicesImp();
 		response.setContentType("application/json");
 		
 		
 		PrintWriter writer = response.getWriter();
-        TestUser user1 = new TestUser("testIDentifier","true");
-        ObjectMapper mapper = new ObjectMapper();
-        String jason = mapper.writeValueAsString(user1);
-        writer.print(jason);
-    
+        try {
+			ResponseCode responseCode = createServices.CreateNotification(eventUrl) ;
+			System.out.println(responseCode.getSuccess());
+			System.out.println(responseCode.getAccountIdentifier());
+			System.out.println(responseCode.getMessage());
+			System.out.println(responseCode.getErrorCode());
+			ObjectMapper mapper = new ObjectMapper();
+	        String jason = mapper.writeValueAsString(responseCode);
+	        writer.print(jason);
+	    
+		} 
         
+        catch (AccountAlreadyExists e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         
 		}
 

@@ -3,15 +3,15 @@
   <display-name>AppDirectIntegration</display-name>
   <context-param>
     <param-name>dbUser</param-name>
-    <param-value>sql6159767</param-value>
+    <param-value>root</param-value>
   </context-param>
   <context-param>
     <param-name>dbPassword</param-name>
-    <param-value>G4hz2B9wTF</param-value>
+    <param-value>password</param-value>
   </context-param>
   <context-param>
     <param-name>dbURL</param-name>
-    <param-value>jdbc:mysql://sql6.freemysqlhosting.net/sql6159767</param-value>
+    <param-value>jdbc:mysql://localhost:3306/testproductnaina</param-value>
   </context-param>
   <listener>
     <listener-class>
